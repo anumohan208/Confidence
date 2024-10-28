@@ -58,7 +58,9 @@ const CreateEvent = () => {
 
     return Object.keys(newErrors).length === 0;
   };
-
+  const handleCancel = async()=>{
+    navigate('/admin');
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -195,6 +197,7 @@ const CreateEvent = () => {
           {errors.image && <span className="error">{errors.image}</span>}
         </label>
         <button type="submit">Create Event</button>
+        <button type="button" onClick={handleCancel}>Cancel</button>
       </form>
     </div>
   );
