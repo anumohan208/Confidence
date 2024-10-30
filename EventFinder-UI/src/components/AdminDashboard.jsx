@@ -15,6 +15,8 @@ class AdminDashboard extends Component {
     events: [],
     filteredEvents: [],
     filter: 'All',
+    sortColumn: null,
+    sortDirection: 'asc',
     showEditPopup: false,
     editEvent: null,
     allCount: 0,
@@ -54,6 +56,27 @@ class AdminDashboard extends Component {
       filteredEvents = events.filter(event => event.approvalStatus === status);
     }
     this.setState({ filteredEvents, filter: status });
+  };
+
+  handleSort = (column) => {
+    const { sortColumn, sortDirection, filteredEvents } = this.state;
+    let newDirection = 'asc';
+    
+    if (sortColumn === column && sortDirection === 'asc') {
+      newDirection = 'desc';
+    }
+
+    const sortedEvents = [...filteredEvents].sort((a, b) => {
+      if (a[column] < b[column]) return newDirection === 'asc' ? -1 : 1;
+      if (a[column] > b[column]) return newDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    this.setState({
+      filteredEvents: sortedEvents,
+      sortColumn: column,
+      sortDirection: newDirection,
+    });
   };
 
   toggleEditPopup = (event) => {
@@ -168,7 +191,7 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const { filteredEvents, filter, showEditPopup, editEvent,allCount,approvedCount,pendingCount,rejectedCount,images,editErrors } = this.state;
+    const { filteredEvents, filter,sortColumn,sortDirection,showEditPopup, editEvent,allCount,approvedCount,pendingCount,rejectedCount,images,editErrors } = this.state;
 
     return (
       
@@ -213,19 +236,18 @@ class AdminDashboard extends Component {
            
             <table className="event-table">
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Event Name</th>
-                  {/* <th>Description</th> */}
-                  <th>Event Category</th>
-                  <th>Event Date</th>
-                  <th>Event Time</th>
-                  <th>Event Venue</th>
-                  <th>Event Zip Code</th>
-                  <th>Event Price</th>
-                  <th>Approval Status</th>
-                  <th>Actions</th>
-                </tr>
+              <tr>
+                <th onClick={() => this.handleSort('id')}>ID {sortColumn === 'id' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventName')}>Event Name {sortColumn === 'eventName' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventCategory')}>Event Category {sortColumn === 'eventCategory' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventDate')}>Event Date {sortColumn === 'eventDate' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventTime')}>Event Time {sortColumn === 'eventTime' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventLocation')}>Event Venue {sortColumn === 'eventLocation' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventCityzip')}>Event Zip Code {sortColumn === 'eventCityzip' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('eventPrice')}>Event Price {sortColumn === 'eventPrice' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th onClick={() => this.handleSort('approvalStatus')}>Approval Status {sortColumn === 'approvalStatus' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
+                <th>Actions</th>
+              </tr>
               </thead>
               <tbody>
                 {filteredEvents.map(event => (
