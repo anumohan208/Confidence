@@ -162,6 +162,13 @@ class AdminDashboard extends Component {
       console.error('Error deleting the event:', error);
     }
   };
+  //Function to filter past events 
+  filterPastEvents = () => {
+    const { events } = this.state;
+    const today = new Date();
+    const pastEvents = events.filter(event => new Date(event.eventDate) < today);
+    this.setState({ filteredEvents: pastEvents, filter: 'Past' });
+  };
   
   formatTime = (timeArray) => {
     try {
@@ -224,6 +231,7 @@ class AdminDashboard extends Component {
               <li className={filter === 'Approved' ? 'active' : ''} onClick={() => this.filterEvents('Approved')}>Approved</li>
               <li className={filter === 'Pending' ? 'active' : ''} onClick={() => this.filterEvents('Pending')}>Pending</li>
               <li className={filter === 'Rejected' ? 'active' : ''} onClick={() => this.filterEvents('Rejected')}>Rejected</li>
+              <li className={filter === 'Past' ? 'active' : ''} onClick={this.filterPastEvents}>Past Events</li>
               <li>
                   <Link to="/create-event">Create Event</Link> 
               </li>
