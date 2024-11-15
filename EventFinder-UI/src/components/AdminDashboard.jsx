@@ -19,6 +19,7 @@ class AdminDashboard extends Component {
     sortDirection: 'asc',
     showEditPopup: false,
     editEvent: null,
+    searchQuery: '',
     allCount: 0,
     approvedCount: 0,
     pendingCount: 0,
@@ -49,13 +50,43 @@ class AdminDashboard extends Component {
     }
   };
 
-  filterEvents = (status) => {
-    const { events } = this.state;
+  // filterEvents = (status) => {
+  //   const { events } = this.state;
+  //   let filteredEvents = events;
+  //   if (status !== 'All') {
+  //     filteredEvents = events.filter(event => event.approvalStatus === status);
+  //   }
+  //   this.setState({ filteredEvents, filter: status });
+  // };
+
+  // New handleSearch method
+  handleSearch = (e) => {
+    const searchQuery = e.target.value.toLowerCase();
+    this.setState({ searchQuery }, this.applyFilters);
+  };
+
+  applyFilters = () => {
+    const { events, filter, searchQuery } = this.state;
     let filteredEvents = events;
-    if (status !== 'All') {
-      filteredEvents = events.filter(event => event.approvalStatus === status);
+
+    // Apply filtering based on approval status
+    if (filter !== 'All') {
+      filteredEvents = filteredEvents.filter(event => event.approvalStatus === filter);
     }
-    this.setState({ filteredEvents, filter: status });
+
+    // Apply search filter
+    if (searchQuery) {
+      filteredEvents = filteredEvents.filter(event =>
+        event.eventName.toLowerCase().includes(searchQuery) ||
+        event.description.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    this.setState({ filteredEvents });
+  };
+
+  filterEvents = (status) => {
+    this.setState({ filter: status }, this.applyFilters);
   };
 
   handleSort = (column) => {
@@ -198,7 +229,7 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const { filteredEvents, filter,sortColumn,sortDirection,showEditPopup, editEvent,allCount,approvedCount,pendingCount,rejectedCount,images,editErrors } = this.state;
+    const { filteredEvents,searchQuery, filter,sortColumn,sortDirection,showEditPopup, editEvent,allCount,approvedCount,pendingCount,rejectedCount,images,editErrors } = this.state;
 
     return (
       
@@ -241,7 +272,13 @@ class AdminDashboard extends Component {
               </ul>
           </aside>
           <main className="content">
-           
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={this.handleSearch}
+            className="search-input"
+          />
             <table className="event-table">
               <thead>
               <tr>
