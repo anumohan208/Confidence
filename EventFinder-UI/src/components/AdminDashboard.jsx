@@ -272,6 +272,7 @@ class AdminDashboard extends Component {
               </ul>
           </aside>
           <main className="content">
+            
           <input
             type="text"
             placeholder="Search events..."
