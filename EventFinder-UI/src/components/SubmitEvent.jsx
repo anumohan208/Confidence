@@ -71,7 +71,9 @@ const SubmitEvent = () => {
 
     return Object.keys(newErrors).length === 0;
   };
-
+  const handleCancel = async()=>{
+    navigate('/dashboard');
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -201,6 +203,7 @@ const SubmitEvent = () => {
           {errors.image && <span className="error">{errors.image}</span>}
         </label>
         <button type="submit">Submit Event</button>
+        <button type="button" onClick={handleCancel}>Cancel</button>
       </form>
     </div>
   );
