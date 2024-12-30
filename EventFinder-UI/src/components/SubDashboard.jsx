@@ -9,6 +9,12 @@ const SubDashboard = () => {
   const { user, fetchSubmissions } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [error, setError] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [filteredSubmissions, setFilteredSubmissions] = useState(submissions);
+
+useEffect(() => {
+  setFilteredSubmissions(submissions);
+}, [submissions]);
 
   // Fetch submissions when the component mounts
   useEffect(() => {
@@ -26,6 +32,19 @@ const SubDashboard = () => {
       console.error('Error fetching data', error);
       setError('Error fetching data. Please try again later.');
     }
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchText(value);
+  
+    const filtered = submissions.filter(
+      (event) =>
+        event.eventName.toLowerCase().includes(value) ||
+        event.eventCategory.toLowerCase().includes(value)
+    );
+  
+    setFilteredSubmissions(filtered);
   };
 
   const formatTime = (time) => {
@@ -59,8 +78,22 @@ const SubDashboard = () => {
             </li>
           </ul>
         </aside>
-        {submissions.length > 0 ? (
-          <main className="content">
+        <main className="content">
+          {/* Search Functionality */}
+          <div className="search-container">
+            <label>
+              Search Submissions:
+              <input
+                type="text"
+                name="search"
+                value={searchText}
+                placeholder="Search by name or category"
+                onChange={(e) => handleSearchChange(e)}
+              />
+            </label>
+          </div>
+  
+          {filteredSubmissions.length > 0 ? (
             <table className="event-table">
               <thead>
                 <tr>
@@ -77,7 +110,7 @@ const SubDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {submissions.map((event) => (
+                {filteredSubmissions.map((event) => (
                   <tr key={event.id}>
                     <td>{event.id}</td>
                     <td>{event.eventName}</td>
@@ -93,10 +126,10 @@ const SubDashboard = () => {
                 ))}
               </tbody>
             </table>
-          </main>
-        ) : (
-          <p>You have not submitted any events yet.</p>
-        )}
+          ) : (
+            <p>No matching submissions found.</p>
+          )}
+        </main>
       </div>
     </div>
   );
